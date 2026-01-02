@@ -6,11 +6,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600;700;800&display=swap" rel="stylesheet">
 <title>Life Optimization Log</title>
 <style>
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
+* { margin: 0; padding: 0; box-sizing: border-box; }
 
 :root {
   --bg-color: #F2F0E9;
@@ -19,6 +15,9 @@
   --accent-color: #d4af37;
   --frame-width: 25px;
   --line-color: rgba(0,0,0,0.1);
+  /* Velocità calibrata per la massima fluidità visiva */
+  --transition-speed: 1.1s; 
+  --transition-cubic: cubic-bezier(0.65, 0, 0.35, 1);
 }
 
 body {
@@ -30,22 +29,8 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* Nascondi la barra di scorrimento ma permetti lo scroll */
-.sections-wrapper::-webkit-scrollbar {
-  display: none;
-}
-.sections-wrapper {
-  -ms-overflow-style: none;  /* IE and Edge */
-  scrollbar-width: none;  /* Firefox */
-}
-
-/* Cornice bianca perimetrale */
-.frame {
-  position: fixed;
-  background: #ffffff;
-  z-index: 1000;
-  pointer-events: none;
-}
+/* Cornice Esterna Estetica */
+.frame { position: fixed; background: #ffffff; z-index: 1000; pointer-events: none; }
 .frame-top, .frame-bottom { left: 0; right: 0; height: var(--frame-width); }
 .frame-top { top: 0; }
 .frame-bottom { bottom: 0; }
@@ -62,180 +47,117 @@ body {
   overflow: hidden;
 }
 
-/* Effetto Sole alto a sinistra */
+/* Sfondo Gradiente Dinamico */
 .gradient-bg {
   position: absolute;
   top: 0; left: 0; right: 0; bottom: 0;
   background: radial-gradient(circle at 10% 10%, #FFD700 0%, #FDFBD4 15%, var(--bg-color) 45%);
-  opacity: 1;
-  transition: opacity 1s ease;
   z-index: 1;
+  transition: opacity var(--transition-speed) var(--transition-cubic);
 }
 
-/* Homepage */
-.homepage {
-  position: absolute;
-  top: 0; left: 0; right: 0; bottom: 0;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  padding: 0 10%;
-  z-index: 5;
-  transition: transform 1s cubic-bezier(0.85, 0, 0.15, 1), opacity 0.8s ease;
-}
-
-.homepage.hidden {
-  transform: translateY(-100%);
-  opacity: 0;
-  pointer-events: none;
-}
-
-.homepage-description {
-  font-size: 0.95rem;
-  font-weight: 700;
-  color: var(--text-muted);
-  margin-bottom: 0.8rem;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-}
-
-.homepage-title {
-  font-size: clamp(3rem, 10vw, 8rem);
-  font-weight: 800;
-  line-height: 0.85;
-  text-transform: uppercase;
-  letter-spacing: -0.04em;
-}
-
-/* Menu Navigazione */
+/* Navigazione Superiore */
 .nav-menu {
   position: fixed;
   top: calc(var(--frame-width) + 40px);
   right: calc(var(--frame-width) + 60px);
-  display: flex;
-  gap: 35px;
-  align-items: center;
-  z-index: 2000;
+  display: flex; gap: 35px; align-items: center; z-index: 2000;
 }
-
 .nav-menu button {
-  background: none;
-  border: none;
-  font-family: inherit;
-  font-size: 1.1rem;
-  font-weight: 500;
-  cursor: pointer;
-  color: var(--text-color);
-  text-transform: lowercase;
-  transition: opacity 0.3s;
+  background: none; border: none; font-family: inherit; font-size: 1.1rem;
+  font-weight: 500; cursor: pointer; color: var(--text-color);
+  text-transform: lowercase; transition: opacity 0.3s ease;
+  display: flex; align-items: center; justify-content: center;
+  height: 32px;
+  padding: 0;
 }
-
 .nav-menu button:hover { opacity: 0.5; }
+.home-icon svg { width: 26px; height: 26px; stroke: currentColor; fill: none; stroke-width: 1.8; }
 
-.home-icon svg { width: 24px; height: 24px; stroke: currentColor; fill: none; stroke-width: 2; }
+/* Homepage Section */
+.homepage {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  display: flex; flex-direction: column; justify-content: center;
+  padding: 0 10%; z-index: 5;
+  transition: transform var(--transition-speed) var(--transition-cubic), 
+              opacity var(--transition-speed) var(--transition-cubic);
+}
+.homepage.hidden { transform: translateY(-15%); opacity: 0; pointer-events: none; }
 
-/* Contenitore Sezioni con Transizione */
+.hero-content { margin-top: 55px; }
+.homepage-title { font-size: clamp(3rem, 10vw, 8rem); font-weight: 800; line-height: 0.85; text-transform: uppercase; letter-spacing: -0.04em; margin-bottom: 1.5rem; }
+.homepage-description { font-size: 0.85rem; font-weight: 400; color: var(--text-muted); max-width: 700px; }
+
+/* Contenitore Sezioni con scorrimento fluido */
 .sections-container {
   position: absolute;
   top: 0; left: 0; right: 0; bottom: 0;
   background: var(--bg-color);
   z-index: 10;
   transform: translateY(100%);
-  transition: transform 1s cubic-bezier(0.85, 0, 0.15, 1);
-  overflow: hidden;
+  transition: transform var(--transition-speed) var(--transition-cubic);
+  visibility: hidden;
 }
+.sections-container.active { transform: translateY(0); visibility: visible; }
 
-.sections-container.active { transform: translateY(0); }
-
-.sections-container.switching {
-  transform: translateY(100%);
-  transition: none;
+.sections-wrapper { 
+  padding: 120px 10% 100px; 
+  max-width: 1400px; 
+  margin: 0 auto; 
+  height: 100%; 
+  overflow-y: auto; 
+  scrollbar-width: none; 
 }
+.sections-wrapper::-webkit-scrollbar { display: none; }
 
-.sections-wrapper {
-  padding: 90px 10% 100px; /* Ridotto il padding top da 150px a 90px per alzare i titoli */
-  max-width: 1400px;
-  margin: 0 auto;
-  height: 100%;
-  overflow-y: auto;
+/* Transizione per le sezioni interne */
+.section { 
+  display: none; 
+  opacity: 0; 
+  transform: translateY(30px); 
+  transition: opacity 0.7s var(--transition-cubic), 
+              transform 0.7s var(--transition-cubic); 
 }
+.section.active { display: block; opacity: 1; transform: translateY(0); }
+.section-title { font-size: 3.5rem; font-weight: 300; margin-bottom: 40px; text-transform: lowercase; }
 
-.section { display: none; opacity: 0; transition: opacity 0.5s ease 0.3s; }
-.section.active { display: block; opacity: 1; }
-
-.section-title {
-  font-size: 3.5rem;
-  font-weight: 300;
-  margin-bottom: 20px; /* Ridotto il margine inferiore per alzare i grafici rispetto al titolo */
-  text-transform: lowercase;
-}
-
-/* Grafici */
+/* Grafici e UI Elements */
 .chart-box { margin-bottom: 80px; }
-
-.chart-svg {
-  width: 100%;
-  height: 480px;
-  background: transparent;
-  overflow: visible;
-}
-
+.chart-svg { width: 100%; height: 480px; background: transparent; overflow: visible; }
 .axis-label { font-size: 12px; fill: #888; font-weight: 400; }
 .grid-line { stroke: #e5e5e5; stroke-width: 1; }
-
-.chart-footer { margin-top: 40px; }
 
 .legend { display: flex; gap: 20px; flex-wrap: wrap; margin-bottom: 30px; }
 .legend-item { display: flex; align-items: center; gap: 8px; font-size: 0.8rem; color: #666; }
 .legend-dot { width: 10px; height: 10px; border-radius: 2px; }
 
-.notes-section {
-  margin-top: 50px;
-  padding-top: 20px;
-  border-top: 1px solid var(--line-color);
-  font-size: 0.85rem;
-  color: var(--text-muted);
-  font-style: italic;
-}
+.notes-section { margin-top: 50px; padding-top: 20px; border-top: 1px solid var(--line-color); font-size: 0.85rem; color: var(--text-muted); font-style: italic; }
 
-/* Timeline */
-.timeline-list {
-  display: flex;
-  flex-direction: column-reverse;
-  border-left: 1px solid var(--line-color);
-  padding-left: 30px;
-  margin-top: 40px; /* Aggiunto spazio sopra la timeline */
-}
+.timeline-list { display: flex; flex-direction: column; border-left: 1px solid var(--line-color); padding-left: 30px; margin-top: 40px; }
 .timeline-item { position: relative; margin-bottom: 50px; }
 .timeline-item::before {
-  content: ''; position: absolute; left: -36px; top: 8px;
-  width: 10px; height: 10px; background: var(--bg-color);
+  content: ''; position: absolute; left: -36.5px; top: 8px;
+  width: 11px; height: 11px; background: var(--bg-color);
   border: 1px solid var(--text-color); border-radius: 50%;
 }
 .timeline-date { font-size: 0.75rem; color: #888; text-transform: uppercase; margin-bottom: 5px; }
 
-/* Resources */
 .resources-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; margin-top: 40px; }
-.res-card {
-  padding: 30px; border: 1px solid var(--line-color);
-  text-decoration: none; color: inherit; transition: background 0.3s;
-}
+.res-card { padding: 30px; border: 1px solid var(--line-color); text-decoration: none; color: inherit; transition: background 0.3s; }
 .res-card:hover { background: #fff; }
-
 </style>
 </head>
 <body>
 
-<div class="frame frame-top"></div>
-<div class="frame frame-bottom"></div>
-<div class="frame frame-left"></div>
-<div class="frame frame-right"></div>
+<div class="frame frame-top"></div><div class="frame frame-bottom"></div>
+<div class="frame frame-left"></div><div class="frame frame-right"></div>
 
 <div class="main-container">
   <div class="gradient-bg" id="bgLayer"></div>
 
   <nav class="nav-menu">
-    <button data-target="home" class="home-icon">
+    <button data-target="home" class="home-icon" title="Home">
       <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
     </button>
     <button data-target="timeline">timeline</button>
@@ -246,162 +168,66 @@ body {
 
   <!-- Homepage -->
   <section class="homepage" id="homeSection">
-    <p class="homepage-description">This site was created as a space for analysing and documenting personal and economic growth over time. It is not a motivational diary, nor a collection of abstract goals, but a structured notation system in which decisions, habits and strategies that affect individual well-being and economic sustainability are observed, recorded and reworked.</p>
-    <h1 class="homepage-title">LIFE<br>OPTIMIZATION<br>LOG</h1>
+    <div class="hero-content">
+      <h1 class="homepage-title">LIFE<br>OPTIMIZATION<br>LOG</h1>
+      <p class="homepage-description">This site was created as a space for analysing and documenting personal and economic growth over time. It is not a motivational diary, nor a collection of abstract goals, but a structured notation system in which decisions, habits and strategies that affect individual well-being and economic sustainability are observed, recorded and reworked.</p>
+    </div>
   </section>
 
-  <!-- Contenitore delle sezioni -->
+  <!-- Content Container -->
   <div class="sections-container" id="contentLayer">
-    <div class="sections-wrapper">
+    <div class="sections-wrapper" id="scrollWrapper">
       
-      <!-- Timeline -->
+      <!-- Sezione Timeline -->
       <div class="section" id="timeline">
         <h2 class="section-title">timeline</h2>
-        <div class="timeline-list">
-          <div class="timeline-item">
-            <div class="timeline-date">Gennaio 2024</div>
-            <h3>Inizio Protocollo</h3>
-            <p>Fase Alpha del sistema di tracciamento asset.</p>
-          </div>
-          <div class="timeline-item">
-            <div class="timeline-date">Marzo 2024</div>
-            <h3>Espansione wellness</h3>
-            <p>Integrazione metriche benessere e focus.</p>
-          </div>
-          <div class="timeline-item">
-            <div class="timeline-date">Oggi</div>
-            <h3>Update Star Trak</h3>
-            <p>Nuova interfaccia architettonica v2.5.</p>
-          </div>
-        </div>
+        <div class="timeline-list" id="timeline-target"></div>
       </div>
 
-      <!-- wellness -->
+      <!-- Sezione Wellness -->
       <div class="section" id="wellness">
         <h2 class="section-title">wellness</h2>
         <div class="chart-box">
-          <svg class="chart-svg" viewBox="0 0 1000 480">
-            <g class="grid-y">
-              <text x="35" y="385" class="axis-label" text-anchor="end">0</text>
-              <line x1="50" y1="380" x2="950" y2="380" class="grid-line" />
-              <text x="35" y="352" class="axis-label" text-anchor="end">10</text>
-              <line x1="50" y1="347" x2="950" y2="347" class="grid-line" />
-              <text x="35" y="319" class="axis-label" text-anchor="end">20</text>
-              <line x1="50" y1="314" x2="950" y2="314" class="grid-line" />
-              <text x="35" y="286" class="axis-label" text-anchor="end">30</text>
-              <line x1="50" y1="281" x2="950" y2="281" class="grid-line" />
-              <text x="35" y="253" class="axis-label" text-anchor="end">40</text>
-              <line x1="50" y1="248" x2="950" y2="248" class="grid-line" />
-              <text x="35" y="220" class="axis-label" text-anchor="end">50</text>
-              <line x1="50" y1="215" x2="950" y2="215" class="grid-line" />
-              <text x="35" y="187" class="axis-label" text-anchor="end">60</text>
-              <line x1="50" y1="182" x2="950" y2="182" class="grid-line" />
-              <text x="35" y="154" class="axis-label" text-anchor="end">70</text>
-              <line x1="50" y1="149" x2="950" y2="149" class="grid-line" />
-              <text x="35" y="121" class="axis-label" text-anchor="end">80</text>
-              <line x1="50" y1="116" x2="950" y2="116" class="grid-line" />
-              <text x="35" y="88" class="axis-label" text-anchor="end">90</text>
-              <line x1="50" y1="83" x2="950" y2="83" class="grid-line" />
-              <text x="35" y="55" class="axis-label" text-anchor="end">100</text>
-              <line x1="50" y1="50" x2="950" y2="50" class="grid-line" />
-            </g>
-            <g class="grid-x">
-              <text x="90" y="410" class="axis-label" text-anchor="middle">GEN</text>
-              <text x="165" y="410" class="axis-label" text-anchor="middle">FEB</text>
-              <text x="240" y="410" class="axis-label" text-anchor="middle">MAR</text>
-              <text x="315" y="410" class="axis-label" text-anchor="middle">APR</text>
-              <text x="390" y="410" class="axis-label" text-anchor="middle">MAG</text>
-              <text x="465" y="410" class="axis-label" text-anchor="middle">GIU</text>
-              <text x="540" y="410" class="axis-label" text-anchor="middle">LUG</text>
-              <text x="615" y="410" class="axis-label" text-anchor="middle">AGO</text>
-              <text x="690" y="410" class="axis-label" text-anchor="middle">SET</text>
-              <text x="765" y="410" class="axis-label" text-anchor="middle">OTT</text>
-              <text x="840" y="410" class="axis-label" text-anchor="middle">NOV</text>
-              <text x="915" y="410" class="axis-label" text-anchor="middle">DIC</text>
-            </g>
-          </svg>
+          <svg id="wellness-chart" class="chart-svg" viewBox="0 0 1000 480"></svg>
           <div class="chart-footer">
             <div class="legend">
               <div class="legend-item"><div class="legend-dot" style="background:#1a1a1a"></div> Wellness Index</div>
             </div>
-            <div class="notes-section">Annotazioni: Monitoraggio indice di benessere soggettivo.</div>
+            <div class="notes-section">
+              The Wellness Index is a quantitative indicator of personal well-being expressed on a scale of 0–100. 
+The value summarises multiple physiological and behavioural dimensions based on monthly data collected via wearable devices and manual input. 
+The index is not a clinical measurement, but a structured self-assessment tool useful for monitoring the balance between recovery, physical activity, cardiovascular status and workload over time. The final score is derived from a combination of four normalised components: sleep quality (total hours, REM and deep sleep), heart rate at rest and during training, level of physical activity (workouts, active minutes and steps) and work-stress balance. 
+Each component contributes to the final value according to a pre-established weighting, with parameters saturated above thresholds considered physiologically optimal, to avoid overestimation due to excesses. Higher values indicate a condition of greater balance and overall adaptation, while low values suggest possible overload or insufficient recovery. 
+The monthly trend of the index is designed to be analysed longitudinally, favouring the trend over the single point value.
+
+            </div>
           </div>
         </div>
       </div>
 
-      <!-- Metrics -->
+      <!-- Sezione Metrics -->
       <div class="section" id="metrics">
         <h2 class="section-title">metrics</h2>
         <div class="chart-box">
-          <svg class="chart-svg" viewBox="0 0 1000 480">
-            <g class="grid-y">
-              <text x="35" y="385" class="axis-label" text-anchor="end">0</text>
-              <line x1="50" y1="380" x2="950" y2="380" class="grid-line" />
-              <text x="35" y="352" class="axis-label" text-anchor="end">10</text>
-              <line x1="50" y1="347" x2="950" y2="347" class="grid-line" />
-              <text x="35" y="319" class="axis-label" text-anchor="end">20</text>
-              <line x1="50" y1="314" x2="950" y2="314" class="grid-line" />
-              <text x="35" y="286" class="axis-label" text-anchor="end">30</text>
-              <line x1="50" y1="281" x2="950" y2="281" class="grid-line" />
-              <text x="35" y="253" class="axis-label" text-anchor="end">40</text>
-              <line x1="50" y1="248" x2="950" y2="248" class="grid-line" />
-              <text x="35" y="220" class="axis-label" text-anchor="end">50</text>
-              <line x1="50" y1="215" x2="950" y2="215" class="grid-line" />
-              <text x="35" y="187" class="axis-label" text-anchor="end">60</text>
-              <line x1="50" y1="182" x2="950" y2="182" class="grid-line" />
-              <text x="35" y="154" class="axis-label" text-anchor="end">70</text>
-              <line x1="50" y1="149" x2="950" y2="149" class="grid-line" />
-              <text x="35" y="121" class="axis-label" text-anchor="end">80</text>
-              <line x1="50" y1="116" x2="950" y2="116" class="grid-line" />
-              <text x="35" y="88" class="axis-label" text-anchor="end">90</text>
-              <line x1="50" y1="83" x2="950" y2="83" class="grid-line" />
-              <text x="35" y="55" class="axis-label" text-anchor="end">100</text>
-              <line x1="50" y1="50" x2="950" y2="50" class="grid-line" />
-            </g>
-            <g class="grid-x">
-              <text x="90" y="410" class="axis-label" text-anchor="middle">GEN</text>
-              <text x="165" y="410" class="axis-label" text-anchor="middle">FEB</text>
-              <text x="240" y="410" class="axis-label" text-anchor="middle">MAR</text>
-              <text x="315" y="410" class="axis-label" text-anchor="middle">APR</text>
-              <text x="390" y="410" class="axis-label" text-anchor="middle">MAG</text>
-              <text x="465" y="410" class="axis-label" text-anchor="middle">GIU</text>
-              <text x="540" y="410" class="axis-label" text-anchor="middle">LUG</text>
-              <text x="615" y="410" class="axis-label" text-anchor="middle">AGO</text>
-              <text x="690" y="410" class="axis-label" text-anchor="middle">SET</text>
-              <text x="765" y="410" class="axis-label" text-anchor="middle">OTT</text>
-              <text x="840" y="410" class="axis-label" text-anchor="middle">NOV</text>
-              <text x="915" y="410" class="axis-label" text-anchor="middle">DIC</text>
-            </g>
-            <!-- Linee dati vuote -->
-            <polyline points="" fill="none" stroke="#1a1a1a" stroke-width="2" />
-            <polyline points="" fill="none" stroke="#888" stroke-width="2" stroke-dasharray="4" />
-            <polyline points="" fill="none" stroke="#d4af37" stroke-width="2" />
-            <polyline points="" fill="none" stroke="#000" stroke-width="3" />
-          </svg>
+          <svg id="metrics-chart" class="chart-svg" viewBox="0 0 1000 480"></svg>
           <div class="chart-footer">
             <div class="legend">
               <div class="legend-item"><div class="legend-dot" style="background:#1a1a1a"></div> 1° Pillar</div>
-              <div class="legend-item"><div class="legend-dot" style="background:#888; border: 1px dashed #000"></div> 2° Pillar</div>
+              <div class="legend-item"><div class="legend-dot" style="background:#888"></div> 2° Pillar</div>
               <div class="legend-item"><div class="legend-dot" style="background:#d4af37"></div> 3° Pillar</div>
-              <div class="legend-item"><div class="legend-dot" style="background:#000"></div> 4° Pillar</div>
+              <div class="legend-item"><div class="legend-dot" style="background:#1a1a1a"></div> 4° Pillar</div>
             </div>
-            <div class="notes-section">Note: Analisi dei quattro pilastri finanziari.</div>
+            <div class="notes-section">The Metrics section is dedicated to monitoring the evolution of assets over time through Net Worth, understood as the difference between assets and liabilities. The value represents a summary measure of personal financial strength and is analysed longitudinally, focusing on trends over time rather than specific changes. Net Worth is not interpreted as an isolated objective, but as an indicator of the sustainability of economic decisions, accumulation capacity and risk management. The analysis focuses on the consistency between asset growth, stability and allocation strategy, rather than on short-term maximisation..</div>
           </div>
         </div>
       </div>
 
-      <!-- Resources -->
+      <!-- Sezione Resources -->
       <div class="section" id="resources">
         <h2 class="section-title">resources</h2>
         <div class="resources-grid">
-          <a href="#" class="res-card">
-            <h3>Google Sheets</h3>
-            <p>Database principale per il calcolo dei pilastri.</p>
-          </a>
-          <a href="#" class="res-card">
-            <h3>Focus Log</h3>
-            <p>Archivio storico dei log comportamentali.</p>
-          </a>
+          <a href="https://docs.google.com/spreadsheets/d/1CrpYe5Ya7DgxQKg2YMJ-Crjw_4ITNSy-/edit?usp=sharing&ouid=106648932252690575112&rtpof=true&sd=true" class="res-card"><h3>Sheets Net worth</h3><p>Sheets with formulas and history.</p></a>
+          <a href="https://docs.google.com/spreadsheets/d/18DdCUyG2exNTy_qeu0TurG9FLMTWp3uCHHGhMRKZ5Zs/edit?usp=sharing" class="res-card"><h3>Sheet Wellness</h3><p>Sheet with formulas and history.</p></a>
         </div>
       </div>
 
@@ -410,47 +236,139 @@ body {
 </div>
 
 <script>
-const buttons = document.querySelectorAll('.nav-menu button');
-const sections = document.querySelectorAll('.section');
-const homeSection = document.getElementById('homeSection');
-const contentLayer = document.getElementById('contentLayer');
-const bgLayer = document.getElementById('bgLayer');
+/**
+ * ==========================================
+ * DATA STORAGE
+ * ==========================================
+ */
+const APP_DATA = {
+  timeline: [
+    { date: "Gennaio 2024", title: "Inizio Protocollo", desc: "Fase Alpha del sistema di tracciamento asset." },
+    { date: "Marzo 2024", title: "Espansione Wellness", desc: "Integrazione metriche benessere e focus." },
+    { date: "Oggi", title: "Update Star Trak", desc: "Nuova interfaccia architettonica v2.5." }
+  ],
+  wellness: [ , , , , , , , , , , ],
 
-buttons.forEach(btn => {
-  btn.addEventListener('click', () => {
-    const target = btn.getAttribute('data-target');
+  metrics: {
+    p1: [ , , , , , , , , , , ],
+    p2: [ , , , , , , , , , , ],
+    p3: [ , , , , , , , , , , ],
+    p4: [ , , , , , , , , , , ],
+  }
+};
 
-    if (target === 'home') {
-      contentLayer.classList.remove('active');
-      setTimeout(() => {
-        homeSection.classList.remove('hidden');
-        bgLayer.style.opacity = "1";
-      }, 500);
-    } else {
-      if (contentLayer.classList.contains('active')) {
-        contentLayer.classList.add('switching');
-        
-        setTimeout(() => {
-          sections.forEach(s => s.classList.remove('active'));
-          document.getElementById(target).classList.add('active');
-          contentLayer.classList.remove('switching');
-        }, 300);
-      } else {
-        homeSection.classList.add('hidden');
-        bgLayer.style.opacity = "0";
-        setTimeout(() => {
-          sections.forEach(s => s.classList.remove('active'));
-          document.getElementById(target).classList.add('active');
-          contentLayer.classList.add('active');
-        }, 500);
-      }
-    }
+/**
+ * ==========================================
+ * RENDERING ENGINE
+ * ==========================================
+ */
+const drawApp = () => {
+  // Timeline
+  const tl = document.getElementById('timeline-target');
+  APP_DATA.timeline.reverse().forEach(i => {
+    tl.innerHTML += `<div class="timeline-item"><div class="timeline-date">${i.date}</div><h3>${i.title}</h3><p>${i.desc}</p></div>`;
   });
-});
+
+  const setupChart = (id) => {
+    const svg = document.getElementById(id);
+    const months = ["GEN", "FEB", "MAR", "APR", "MAG", "GIU", "LUG", "AGO", "SET", "OTT", "NOV", "DIC"];
+    for(let i=0; i<=10; i++) {
+      const y = 380 - (i * 33);
+      svg.innerHTML += `<line x1="50" y1="${y}" x2="950" y2="${y}" class="grid-line" />`;
+      svg.innerHTML += `<text x="35" y="${y+5}" class="axis-label" text-anchor="end">${i*10}</text>`;
+    }
+    months.forEach((m, i) => {
+      const x = 90 + (i * 75);
+      svg.innerHTML += `<text x="${x}" y="410" class="axis-label" text-anchor="middle">${m}</text>`;
+    });
+  };
+
+  const drawPath = (id, data, color, dashed = false) => {
+    const svg = document.getElementById(id);
+    let pts = "";
+    data.forEach((v, i) => {
+      const x = 90 + (i * 75);
+      const y = 380 - (v * 3.3);
+      pts += `${x},${y} `;
+      if(v > 0) {
+        const c = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+        c.setAttribute("cx", x); c.setAttribute("cy", y); c.setAttribute("r", "3"); c.setAttribute("fill", color);
+        svg.appendChild(c);
+      }
+    });
+    const poly = document.createElementNS("http://www.w3.org/2000/svg", "polyline");
+    poly.setAttribute("points", pts); poly.setAttribute("fill", "none"); poly.setAttribute("stroke", color); poly.setAttribute("stroke-width", "2");
+    if(dashed) poly.setAttribute("stroke-dasharray", "4");
+    svg.appendChild(poly);
+  };
+
+  setupChart('wellness-chart');
+  drawPath('wellness-chart', APP_DATA.wellness, '#1a1a1a');
+  setupChart('metrics-chart');
+  drawPath('metrics-chart', APP_DATA.metrics.p1, '#1a1a1a');
+  drawPath('metrics-chart', APP_DATA.metrics.p2, '#888', true);
+  drawPath('metrics-chart', APP_DATA.metrics.p3, '#d4af37');
+  drawPath('metrics-chart', APP_DATA.metrics.p4, '#FF0000');
+
+  // Gestione Navigazione
+  const navBtns = document.querySelectorAll('.nav-menu button');
+  const sections = document.querySelectorAll('.section');
+  const home = document.getElementById('homeSection');
+  const layer = document.getElementById('contentLayer');
+  const bg = document.getElementById('bgLayer');
+  const wrapper = document.getElementById('scrollWrapper');
+
+  let activeId = 'home';
+
+  navBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const target = btn.getAttribute('data-target');
+      if (target === activeId) return;
+
+      if (target === 'home') {
+        layer.classList.remove('active');
+        activeId = 'home';
+        setTimeout(() => {
+          home.classList.remove('hidden');
+          bg.style.opacity = "1";
+        }, 400);
+      } else {
+        const isFromHome = activeId === 'home';
+        
+        if (isFromHome) {
+          home.classList.add('hidden');
+          bg.style.opacity = "0";
+          sections.forEach(s => { s.classList.remove('active'); s.style.display = 'none'; });
+          
+          const next = document.getElementById(target);
+          next.style.display = 'block';
+          
+          setTimeout(() => {
+            layer.classList.add('active');
+            next.classList.add('active');
+            wrapper.scrollTop = 0;
+          }, 150);
+        } else {
+          const prev = document.getElementById(activeId);
+          const next = document.getElementById(target);
+
+          prev.classList.remove('active');
+          setTimeout(() => {
+            prev.style.display = 'none';
+            next.style.display = 'block';
+            next.offsetHeight; // Reflow
+            next.classList.add('active');
+            wrapper.scrollTop = 0;
+          }, 450);
+        }
+        activeId = target;
+      }
+    });
+  });
+};
+
+window.onload = drawApp;
 </script>
 
 </body>
 </html>
-
-
-
