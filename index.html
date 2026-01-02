@@ -59,28 +59,15 @@ body {
   transition: opacity var(--transition-speed) var(--transition-cubic);
 }
 
-/* Navigazione Superiore / Mobile Bottom Bar */
+/* Navigazione Desktop */
 .nav-menu {
   position: fixed;
   top: calc(var(--frame-width) + 40px);
   right: calc(var(--frame-width) + 60px);
-  display: flex; gap: 35px; align-items: center; z-index: 2000;
-}
-
-@media (max-width: 768px) {
-  .nav-menu {
-    top: auto;
-    bottom: var(--frame-width);
-    left: var(--frame-width);
-    right: var(--frame-width);
-    background: rgba(255, 255, 255, 0.8);
-    backdrop-filter: blur(10px);
-    justify-content: space-around;
-    padding: 15px 0;
-    gap: 0;
-    border-top: 1px solid var(--line-color);
-  }
-  .nav-menu button { font-size: 0.9rem; }
+  display: flex; 
+  gap: 35px; 
+  align-items: center; 
+  z-index: 2000;
 }
 
 .nav-menu button {
@@ -93,6 +80,134 @@ body {
 }
 .nav-menu button:hover { opacity: 0.5; }
 .home-icon svg { width: 26px; height: 26px; stroke: currentColor; fill: none; stroke-width: 1.8; }
+
+/* Menu Mobile Hamburger */
+.mobile-menu-btn {
+  display: none;
+  position: fixed;
+  top: calc(var(--frame-width) + 20px);
+  right: calc(var(--frame-width) + 20px);
+  width: 44px;
+  height: 44px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  z-index: 3000;
+  padding: 0;
+}
+
+.hamburger {
+  position: relative;
+  width: 24px;
+  height: 18px;
+  margin: auto;
+}
+
+.hamburger span {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: var(--text-color);
+  transition: all 0.3s var(--transition-cubic);
+}
+
+.hamburger span:nth-child(1) { top: 0; }
+.hamburger span:nth-child(2) { top: 8px; }
+.hamburger span:nth-child(3) { top: 16px; }
+
+.mobile-menu-btn.active .hamburger span:nth-child(1) {
+  top: 8px;
+  transform: rotate(45deg);
+}
+
+.mobile-menu-btn.active .hamburger span:nth-child(2) {
+  opacity: 0;
+}
+
+.mobile-menu-btn.active .hamburger span:nth-child(3) {
+  top: 8px;
+  transform: rotate(-45deg);
+}
+
+/* Menu Mobile Overlay */
+.mobile-menu-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(242, 240, 233, 0.98);
+  backdrop-filter: blur(10px);
+  z-index: 2500;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s var(--transition-cubic);
+}
+
+.mobile-menu-overlay.active {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.mobile-menu-content {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+  align-items: center;
+}
+
+.mobile-menu-content button {
+  background: none;
+  border: none;
+  font-family: inherit;
+  font-size: 2rem;
+  font-weight: 500;
+  color: var(--text-color);
+  text-transform: lowercase;
+  cursor: pointer;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.5s var(--transition-cubic), 
+              transform 0.5s var(--transition-cubic);
+  padding: 10px 20px;
+}
+
+.mobile-menu-overlay.active .mobile-menu-content button {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.mobile-menu-content button:nth-child(1) { transition-delay: 0.1s; }
+.mobile-menu-content button:nth-child(2) { transition-delay: 0.15s; }
+.mobile-menu-content button:nth-child(3) { transition-delay: 0.2s; }
+.mobile-menu-content button:nth-child(4) { transition-delay: 0.25s; }
+.mobile-menu-content button:nth-child(5) { transition-delay: 0.3s; }
+
+.mobile-menu-content button:active {
+  opacity: 0.5;
+}
+
+.mobile-menu-icon {
+  display: inline-block;
+  margin-right: 15px;
+}
+
+@media (max-width: 768px) {
+  .nav-menu {
+    display: none;
+  }
+  
+  .mobile-menu-btn,
+  .mobile-menu-overlay {
+    display: block;
+  }
+}
 
 /* Homepage Section */
 .homepage {
@@ -132,7 +247,7 @@ body {
 .sections-wrapper::-webkit-scrollbar { display: none; }
 
 @media (max-width: 768px) {
-  .sections-wrapper { padding: 60px 5% 120px; }
+  .sections-wrapper { padding: 80px 5% 60px; }
 }
 
 .section { 
@@ -190,6 +305,7 @@ body {
 <div class="main-container">
   <div class="gradient-bg" id="bgLayer"></div>
 
+  <!-- Menu Desktop -->
   <nav class="nav-menu">
     <button data-target="home" class="home-icon" title="Home">
       <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
@@ -199,6 +315,31 @@ body {
     <button data-target="metrics">metrics</button>
     <button data-target="resources">resources</button>
   </nav>
+
+  <!-- Hamburger Button Mobile -->
+  <button class="mobile-menu-btn" id="mobileMenuBtn">
+    <div class="hamburger">
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+  </button>
+
+  <!-- Menu Mobile Overlay -->
+  <div class="mobile-menu-overlay" id="mobileMenuOverlay">
+    <div class="mobile-menu-content">
+      <button data-target="home">
+        <span class="mobile-menu-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" style="vertical-align: middle;"><circle cx="12" cy="12" r="5" stroke="currentColor" fill="none" stroke-width="1.8"/><line x1="12" y1="1" x2="12" y2="3" stroke="currentColor" stroke-width="1.8"/><line x1="12" y1="21" x2="12" y2="23" stroke="currentColor" stroke-width="1.8"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64" stroke="currentColor" stroke-width="1.8"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78" stroke="currentColor" stroke-width="1.8"/><line x1="1" y1="12" x2="3" y2="12" stroke="currentColor" stroke-width="1.8"/><line x1="21" y1="12" x2="23" y2="12" stroke="currentColor" stroke-width="1.8"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36" stroke="currentColor" stroke-width="1.8"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22" stroke="currentColor" stroke-width="1.8"/></svg>
+        </span>
+        home
+      </button>
+      <button data-target="timeline">timeline</button>
+      <button data-target="wellness">wellness</button>
+      <button data-target="metrics">metrics</button>
+      <button data-target="resources">resources</button>
+    </div>
+  </div>
 
   <!-- Homepage -->
   <section class="homepage" id="homeSection">
@@ -273,11 +414,6 @@ The monthly trend of the index is designed to be analysed longitudinally, favour
 </div>
 
 <script>
-/**
- * ==========================================
- * DATA STORAGE (Ripristinati dati originali)
- * ==========================================
- */
 const APP_DATA = {
   timeline: [
     { date: "Aug 2015", title: "Engagement to Giada ", desc: " " },
@@ -300,13 +436,7 @@ const APP_DATA = {
   }
 };
 
-/**
- * ==========================================
- * RENDERING ENGINE
- * ==========================================
- */
 const drawApp = () => {
-  // Timeline
   const tl = document.getElementById('timeline-target');
   [...APP_DATA.timeline].reverse().forEach(i => {
     tl.innerHTML += `<div class="timeline-item"><div class="timeline-date">${i.date}</div><h3>${i.title}</h3><p>${i.desc}</p></div>`;
@@ -355,9 +485,9 @@ const drawApp = () => {
   drawPath('metrics-chart', APP_DATA.metrics.p1, '#1a1a1a');
   drawPath('metrics-chart', APP_DATA.metrics.p2, '#888', true);
   drawPath('metrics-chart', APP_DATA.metrics.p3, '#d4af37');
-  drawPath('metrics-chart', APP_DATA.metrics.p4, '#80000');
+  drawPath('metrics-chart', APP_DATA.metrics.p4, '#800000');
 
-  // Gestione Navigazione
+  // Gestione Navigazione Desktop
   const navBtns = document.querySelectorAll('.nav-menu button');
   const sections = document.querySelectorAll('.section');
   const home = document.getElementById('homeSection');
@@ -365,51 +495,78 @@ const drawApp = () => {
   const bg = document.getElementById('bgLayer');
   const wrapper = document.getElementById('scrollWrapper');
 
+  // Gestione Menu Mobile
+  const mobileBtn = document.getElementById('mobileMenuBtn');
+  const mobileOverlay = document.getElementById('mobileMenuOverlay');
+  const mobileBtns = document.querySelectorAll('.mobile-menu-overlay button');
+
   let activeId = 'home';
 
+  // Toggle Menu Mobile
+  mobileBtn.addEventListener('click', () => {
+    mobileBtn.classList.toggle('active');
+    mobileOverlay.classList.toggle('active');
+  });
+
+  // Funzione di navigazione condivisa
+  const navigateTo = (target) => {
+    if (target === activeId) return;
+
+    // Chiudi menu mobile se aperto
+    mobileBtn.classList.remove('active');
+    mobileOverlay.classList.remove('active');
+
+    if (target === 'home') {
+      layer.classList.remove('active');
+      activeId = 'home';
+      setTimeout(() => {
+        home.classList.remove('hidden');
+        bg.style.opacity = "1";
+      }, 400);
+    } else {
+      const isFromHome = activeId === 'home';
+      
+      if (isFromHome) {
+        home.classList.add('hidden');
+        bg.style.opacity = "0";
+        sections.forEach(s => { s.classList.remove('active'); s.style.display = 'none'; });
+        
+        const next = document.getElementById(target);
+        next.style.display = 'block';
+        
+        setTimeout(() => {
+          layer.classList.add('active');
+          next.classList.add('active');
+          wrapper.scrollTop = 0;
+        }, 150);
+      } else {
+        const prev = document.getElementById(activeId);
+        const next = document.getElementById(target);
+
+        prev.classList.remove('active');
+        setTimeout(() => {
+          prev.style.display = 'none';
+          next.style.display = 'block';
+          next.offsetHeight;
+          next.classList.add('active');
+          wrapper.scrollTop = 0;
+        }, 450);
+      }
+      activeId = target;
+    }
+  };
+
+  // Eventi Desktop
   navBtns.forEach(btn => {
     btn.addEventListener('click', () => {
-      const target = btn.getAttribute('data-target');
-      if (target === activeId) return;
+      navigateTo(btn.getAttribute('data-target'));
+    });
+  });
 
-      if (target === 'home') {
-        layer.classList.remove('active');
-        activeId = 'home';
-        setTimeout(() => {
-          home.classList.remove('hidden');
-          bg.style.opacity = "1";
-        }, 400);
-      } else {
-        const isFromHome = activeId === 'home';
-        
-        if (isFromHome) {
-          home.classList.add('hidden');
-          bg.style.opacity = "0";
-          sections.forEach(s => { s.classList.remove('active'); s.style.display = 'none'; });
-          
-          const next = document.getElementById(target);
-          next.style.display = 'block';
-          
-          setTimeout(() => {
-            layer.classList.add('active');
-            next.classList.add('active');
-            wrapper.scrollTop = 0;
-          }, 150);
-        } else {
-          const prev = document.getElementById(activeId);
-          const next = document.getElementById(target);
-
-          prev.classList.remove('active');
-          setTimeout(() => {
-            prev.style.display = 'none';
-            next.style.display = 'block';
-            next.offsetHeight; // Reflow
-            next.classList.add('active');
-            wrapper.scrollTop = 0;
-          }, 450);
-        }
-        activeId = target;
-      }
+  // Eventi Mobile
+  mobileBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      navigateTo(btn.getAttribute('data-target'));
     });
   });
 };
@@ -419,4 +576,3 @@ window.onload = drawApp;
 
 </body>
 </html>
-
