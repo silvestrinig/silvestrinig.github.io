@@ -15,7 +15,6 @@
   --accent-color: #d4af37;
   --frame-width: 25px;
   --line-color: rgba(0,0,0,0.1);
-  /* Velocità calibrata per la massima fluidità visiva */
   --transition-speed: 1.1s; 
   --transition-cubic: cubic-bezier(0.65, 0, 0.35, 1);
 }
@@ -38,6 +37,10 @@ body {
 .frame-left { left: 0; }
 .frame-right { right: 0; }
 
+@media (max-width: 768px) {
+  :root { --frame-width: 12px; }
+}
+
 .main-container {
   position: fixed;
   top: var(--frame-width);
@@ -56,13 +59,30 @@ body {
   transition: opacity var(--transition-speed) var(--transition-cubic);
 }
 
-/* Navigazione Superiore */
+/* Navigazione Superiore / Mobile Bottom Bar */
 .nav-menu {
   position: fixed;
   top: calc(var(--frame-width) + 40px);
   right: calc(var(--frame-width) + 60px);
   display: flex; gap: 35px; align-items: center; z-index: 2000;
 }
+
+@media (max-width: 768px) {
+  .nav-menu {
+    top: auto;
+    bottom: var(--frame-width);
+    left: var(--frame-width);
+    right: var(--frame-width);
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(10px);
+    justify-content: space-around;
+    padding: 15px 0;
+    gap: 0;
+    border-top: 1px solid var(--line-color);
+  }
+  .nav-menu button { font-size: 0.9rem; }
+}
+
 .nav-menu button {
   background: none; border: none; font-family: inherit; font-size: 1.1rem;
   font-weight: 500; cursor: pointer; color: var(--text-color);
@@ -89,7 +109,7 @@ body {
 .homepage-title { font-size: clamp(3rem, 10vw, 8rem); font-weight: 800; line-height: 0.85; text-transform: uppercase; letter-spacing: -0.04em; margin-bottom: 1.5rem; }
 .homepage-description { font-size: 0.85rem; font-weight: 400; color: var(--text-muted); max-width: 700px; }
 
-/* Contenitore Sezioni con scorrimento fluido */
+/* Contenitore Sezioni */
 .sections-container {
   position: absolute;
   top: 0; left: 0; right: 0; bottom: 0;
@@ -111,7 +131,10 @@ body {
 }
 .sections-wrapper::-webkit-scrollbar { display: none; }
 
-/* Transizione per le sezioni interne */
+@media (max-width: 768px) {
+  .sections-wrapper { padding: 60px 5% 120px; }
+}
+
 .section { 
   display: none; 
   opacity: 0; 
@@ -120,10 +143,21 @@ body {
               transform 0.7s var(--transition-cubic); 
 }
 .section.active { display: block; opacity: 1; transform: translateY(0); }
-.section-title { font-size: 3.5rem; font-weight: 300; margin-bottom: 40px; text-transform: lowercase; }
+.section-title { font-size: clamp(2.5rem, 8vw, 3.5rem); font-weight: 300; margin-bottom: 40px; text-transform: lowercase; }
 
-/* Grafici e UI Elements */
-.chart-box { margin-bottom: 80px; }
+/* Grafici e Scroll Mobile */
+.chart-scroll-container {
+  width: 100%;
+  overflow-x: auto;
+  margin-bottom: 40px;
+  -webkit-overflow-scrolling: touch;
+}
+
+.chart-box { min-width: 800px; }
+@media (min-width: 1025px) {
+  .chart-box { min-width: auto; margin-bottom: 80px; }
+}
+
 .chart-svg { width: 100%; height: 480px; background: transparent; overflow: visible; }
 .axis-label { font-size: 12px; fill: #888; font-weight: 400; }
 .grid-line { stroke: #e5e5e5; stroke-width: 1; }
@@ -187,20 +221,21 @@ body {
       <!-- Sezione Wellness -->
       <div class="section" id="wellness">
         <h2 class="section-title">wellness</h2>
-        <div class="chart-box">
-          <svg id="wellness-chart" class="chart-svg" viewBox="0 0 1000 480"></svg>
-          <div class="chart-footer">
-            <div class="legend">
-              <div class="legend-item"><div class="legend-dot" style="background:#1a1a1a"></div> Wellness Index</div>
-            </div>
-            <div class="notes-section">
-              The Wellness Index is a quantitative indicator of personal well-being expressed on a scale of 0–100. 
+        <div class="chart-scroll-container">
+          <div class="chart-box">
+            <svg id="wellness-chart" class="chart-svg" viewBox="0 0 1000 480"></svg>
+          </div>
+        </div>
+        <div class="chart-footer">
+          <div class="legend">
+            <div class="legend-item"><div class="legend-dot" style="background:#1a1a1a"></div> Wellness Index</div>
+          </div>
+          <div class="notes-section">
+            The Wellness Index is a quantitative indicator of personal well-being expressed on a scale of 0–100. 
 The value summarises multiple physiological and behavioural dimensions based on monthly data collected via wearable devices and manual input. 
 The index is not a clinical measurement, but a structured self-assessment tool useful for monitoring the balance between recovery, physical activity, cardiovascular status and workload over time. The final score is derived from a combination of four normalised components: sleep quality (total hours, REM and deep sleep), heart rate at rest and during training, level of physical activity (workouts, active minutes and steps) and work-stress balance. 
 Each component contributes to the final value according to a pre-established weighting, with parameters saturated above thresholds considered physiologically optimal, to avoid overestimation due to excesses. Higher values indicate a condition of greater balance and overall adaptation, while low values suggest possible overload or insufficient recovery. 
 The monthly trend of the index is designed to be analysed longitudinally, favouring the trend over the single point value.
-
-            </div>
           </div>
         </div>
       </div>
@@ -208,17 +243,19 @@ The monthly trend of the index is designed to be analysed longitudinally, favour
       <!-- Sezione Metrics -->
       <div class="section" id="metrics">
         <h2 class="section-title">metrics</h2>
-        <div class="chart-box">
-          <svg id="metrics-chart" class="chart-svg" viewBox="0 0 1000 480"></svg>
-          <div class="chart-footer">
-            <div class="legend">
-              <div class="legend-item"><div class="legend-dot" style="background:#1a1a1a"></div> 1° Pillar</div>
-              <div class="legend-item"><div class="legend-dot" style="background:#888"></div> 2° Pillar</div>
-              <div class="legend-item"><div class="legend-dot" style="background:#d4af37"></div> 3° Pillar</div>
-              <div class="legend-item"><div class="legend-dot" style="background:#1a1a1a"></div> 4° Pillar</div>
-            </div>
-            <div class="notes-section">The Metrics section is dedicated to monitoring the evolution of assets over time through Net Worth, understood as the difference between assets and liabilities. The value represents a summary measure of personal financial strength and is analysed longitudinally, focusing on trends over time rather than specific changes. Net Worth is not interpreted as an isolated objective, but as an indicator of the sustainability of economic decisions, accumulation capacity and risk management. The analysis focuses on the consistency between asset growth, stability and allocation strategy, rather than on short-term maximisation..</div>
+        <div class="chart-scroll-container">
+          <div class="chart-box">
+            <svg id="metrics-chart" class="chart-svg" viewBox="0 0 1000 480"></svg>
           </div>
+        </div>
+        <div class="chart-footer">
+          <div class="legend">
+            <div class="legend-item"><div class="legend-dot" style="background:#1a1a1a"></div> 1° Pillar</div>
+            <div class="legend-item"><div class="legend-dot" style="background:#888"></div> 2° Pillar</div>
+            <div class="legend-item"><div class="legend-dot" style="background:#d4af37"></div> 3° Pillar</div>
+            <div class="legend-item"><div class="legend-dot" style="background:#800000"></div> 4° Pillar</div>
+          </div>
+          <div class="notes-section">The Metrics section is dedicated to monitoring the evolution of assets over time through Net Worth, understood as the difference between assets and liabilities. The value represents a summary measure of personal financial strength and is analysed longitudinally, focusing on trends over time rather than specific changes. Net Worth is not interpreted as an isolated objective, but as an indicator of the sustainability of economic decisions, accumulation capacity and risk management. The analysis focuses on the consistency between asset growth, stability and allocation strategy, rather than on short-term maximisation..</div>
         </div>
       </div>
 
@@ -226,8 +263,8 @@ The monthly trend of the index is designed to be analysed longitudinally, favour
       <div class="section" id="resources">
         <h2 class="section-title">resources</h2>
         <div class="resources-grid">
-          <a href="https://docs.google.com/spreadsheets/d/1CrpYe5Ya7DgxQKg2YMJ-Crjw_4ITNSy-/edit?usp=sharing&ouid=106648932252690575112&rtpof=true&sd=true" class="res-card"><h3>Sheets Net worth</h3><p>Sheets with formulas and history.</p></a>
-          <a href="https://docs.google.com/spreadsheets/d/18DdCUyG2exNTy_qeu0TurG9FLMTWp3uCHHGhMRKZ5Zs/edit?usp=sharing" class="res-card"><h3>Sheet Wellness</h3><p>Sheet with formulas and history.</p></a>
+          <a href="https://docs.google.com/spreadsheets/d/1CrpYe5Ya7DgxQKg2YMJ-Crjw_4ITNSy-/edit?usp=sharing&ouid=106648932252690575112&rtpof=true&sd=true" class="res-card" target="_blank"><h3>Sheets Net worth</h3><p>Sheets with formulas and history.</p></a>
+          <a href="https://docs.google.com/spreadsheets/d/18DdCUyG2exNTy_qeu0TurG9FLMTWp3uCHHGhMRKZ5Zs/edit?usp=sharing" class="res-card" target="_blank"><h3>Sheet Wellness</h3><p>Sheet with formulas and history.</p></a>
         </div>
       </div>
 
@@ -238,7 +275,7 @@ The monthly trend of the index is designed to be analysed longitudinally, favour
 <script>
 /**
  * ==========================================
- * DATA STORAGE
+ * DATA STORAGE (Ripristinati dati originali)
  * ==========================================
  */
 const APP_DATA = {
@@ -271,7 +308,7 @@ const APP_DATA = {
 const drawApp = () => {
   // Timeline
   const tl = document.getElementById('timeline-target');
-  APP_DATA.timeline.reverse().forEach(i => {
+  [...APP_DATA.timeline].reverse().forEach(i => {
     tl.innerHTML += `<div class="timeline-item"><div class="timeline-date">${i.date}</div><h3>${i.title}</h3><p>${i.desc}</p></div>`;
   });
 
@@ -291,21 +328,25 @@ const drawApp = () => {
 
   const drawPath = (id, data, color, dashed = false) => {
     const svg = document.getElementById(id);
+    if (!data || data.length === 0) return;
     let pts = "";
     data.forEach((v, i) => {
+      if(v === undefined || v === null) return;
       const x = 90 + (i * 75);
       const y = 380 - (v * 3.3);
       pts += `${x},${y} `;
-      if(v > 0) {
-        const c = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-        c.setAttribute("cx", x); c.setAttribute("cy", y); c.setAttribute("r", "3"); c.setAttribute("fill", color);
-        svg.appendChild(c);
-      }
+      
+      const c = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+      c.setAttribute("cx", x); c.setAttribute("cy", y); c.setAttribute("r", "3"); c.setAttribute("fill", color);
+      svg.appendChild(c);
     });
-    const poly = document.createElementNS("http://www.w3.org/2000/svg", "polyline");
-    poly.setAttribute("points", pts); poly.setAttribute("fill", "none"); poly.setAttribute("stroke", color); poly.setAttribute("stroke-width", "2");
-    if(dashed) poly.setAttribute("stroke-dasharray", "4");
-    svg.appendChild(poly);
+    
+    if (pts.trim() !== "") {
+      const poly = document.createElementNS("http://www.w3.org/2000/svg", "polyline");
+      poly.setAttribute("points", pts); poly.setAttribute("fill", "none"); poly.setAttribute("stroke", color); poly.setAttribute("stroke-width", "2");
+      if(dashed) poly.setAttribute("stroke-dasharray", "4");
+      svg.appendChild(poly);
+    }
   };
 
   setupChart('wellness-chart');
@@ -314,7 +355,7 @@ const drawApp = () => {
   drawPath('metrics-chart', APP_DATA.metrics.p1, '#1a1a1a');
   drawPath('metrics-chart', APP_DATA.metrics.p2, '#888', true);
   drawPath('metrics-chart', APP_DATA.metrics.p3, '#d4af37');
-  drawPath('metrics-chart', APP_DATA.metrics.p4, '#FF0000');
+  drawPath('metrics-chart', APP_DATA.metrics.p4, '#80000');
 
   // Gestione Navigazione
   const navBtns = document.querySelectorAll('.nav-menu button');
@@ -378,6 +419,3 @@ window.onload = drawApp;
 
 </body>
 </html>
-
-
-
