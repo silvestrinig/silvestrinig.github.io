@@ -1,493 +1,453 @@
 <!DOCTYPE html>
-
 <html lang="it">
 <head>
-<link href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500&display=swap" rel="stylesheet">
 <meta charset="UTF-8">
-<title>SG</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600;700;800&display=swap" rel="stylesheet">
+<title>Life Support System - Star Trak</title>
 <style>
-/* =============================
-   STYLES
-   ============================= */
-body {
+* {
   margin: 0;
-  font-family: 'Rubik', sans-serif;
-  background-color: #ffffff;
-  background-image: radial-gradient(#e6e6e6 1px, transparent 1px);
-  background-size: 18px 18px;
-  background-position: 0 0;
-  color: #111;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --bg-color: #F2F0E9;
+  --text-color: #1a1a1a;
+  --text-muted: #8e8c84;
+  --accent-color: #d4af37;
+  --frame-width: 25px;
+  --line-color: rgba(0,0,0,0.1);
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background: var(--bg-color);
+  color: var(--text-color);
   line-height: 1.6;
+  overflow: hidden;
+  -webkit-font-smoothing: antialiased;
 }
 
-h1, h2, h3 {
-  font-family: 'Rubik', sans-serif;
-  font-weight: normal;
-  position: relative;
-  display: inline-block;
-  padding-bottom: 4px;
-}
-
-h2::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  bottom: 0;
-  width: 100%;
-  height: 6px;
-  background: #fff2a8;
-  z-index: -1;
-}
-
-h1 {
-  font-size: 3rem;
-  text-align: left;
-  margin: 60px auto 40px;
-  max-width: 1000px;
-  background: linear-gradient(transparent 60%, #fff2a8 60%);
-  display: block;
-  padding: 0 20px;
-  color: #111;
-}
-
-section {
-  max-width: 1000px;
-  margin: 0 auto 0;
-  padding: 54px 18px;
-  background: transparent;
-  border-bottom: 1px solid #444;
-}
-
-section:last-of-type {
-  border-bottom: none;
-}
-
-.timeline-wrapper {
-  overflow-x: auto;
-  scrollbar-width: thin;
-  scrollbar-color: #fff2a8 #f0f0f0;
-  position: relative;
-}
-
-.timeline-wrapper::-webkit-scrollbar {
-  height: 8px;
-}
-
-.timeline-wrapper::-webkit-scrollbar-track {
-  background: #f0f0f0;
-}
-
-.timeline-wrapper::-webkit-scrollbar-thumb {
-  background: #fff2a8;
-  border-radius: 4px;
-}
-
-.scroll-indicator {
+/* Nascondi la barra di scorrimento ma permetti lo scroll */
+.sections-wrapper::-webkit-scrollbar {
   display: none;
 }
-
-.timeline {
-  position: relative;
-  height: 200px;
-  min-width: 2000px;
+.sections-wrapper {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
 }
 
-.timeline-line {
+/* Cornice bianca perimetrale */
+.frame {
+  position: fixed;
+  background: #ffffff;
+  z-index: 1000;
+  pointer-events: none;
+}
+.frame-top, .frame-bottom { left: 0; right: 0; height: var(--frame-width); }
+.frame-top { top: 0; }
+.frame-bottom { bottom: 0; }
+.frame-left, .frame-right { top: 0; bottom: 0; width: var(--frame-width); }
+.frame-left { left: 0; }
+.frame-right { right: 0; }
+
+.main-container {
+  position: fixed;
+  top: var(--frame-width);
+  left: var(--frame-width);
+  right: var(--frame-width);
+  bottom: var(--frame-width);
+  overflow: hidden;
+}
+
+/* Effetto Sole alto a sinistra */
+.gradient-bg {
   position: absolute;
-  top: 50%;
-  left: 0;
-  right: 0;
-  height: 2px;
-  background: #111;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: radial-gradient(circle at 10% 10%, #FFD700 0%, #FDFBD4 15%, var(--bg-color) 45%);
+  opacity: 1;
+  transition: opacity 1s ease;
+  z-index: 1;
 }
 
-.event {
-position: absolute;
-top: 50%;
-transform: translateY(-50%);
-text-align: center;
-width: 160px;
-}
-
-.event .date {
-margin-bottom: 12px;
-font-size: 0.9rem;
-}
-
-.event .dot {
-width: 10px;
-height: 10px;
-background: #111;
-border-radius: 50%;
-margin: 0 auto 12px;
-box-shadow: 0 0 0 4px #fff2a8;
-}
-
-.event .text {
-font-size: 0.9rem;
-}
-
-.chart-container {
+/* Homepage */
+.homepage {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
   display: flex;
   flex-direction: column;
-  gap: 40px;
+  justify-content: center;
+  padding: 0 10%;
+  z-index: 5;
+  transition: transform 1s cubic-bezier(0.85, 0, 0.15, 1), opacity 0.8s ease;
 }
 
-.chart-area {
-  width: 100%;
+.homepage.hidden {
+  transform: translateY(-100%);
+  opacity: 0;
+  pointer-events: none;
 }
 
-.legend {
-  margin-top: 20px;
-}
-
-.legend span {
-  display: block;
-  font-size: 0.9rem;
-  font-family: 'Rubik', sans-serif;
-}
-
-.legend .box {
-  display: inline-block;
-  width: 12px;
-  height: 12px;
-  margin-right: 8px;
-}
-
-.notes {
-  width: 100%;
+.homepage-description {
   font-size: 0.95rem;
-  font-family: 'Rubik', sans-serif;
+  font-weight: 700;
+  color: var(--text-muted);
+  margin-bottom: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
-.notes h3 {
-  font-weight: normal;
-  font-family: 'Rubik', sans-serif;
+.homepage-title {
+  font-size: clamp(3rem, 10vw, 8rem);
+  font-weight: 800;
+  line-height: 0.85;
+  text-transform: uppercase;
+  letter-spacing: -0.04em;
 }
 
-.notes p {
-  font-family: 'Rubik', sans-serif;
+/* Menu Navigazione */
+.nav-menu {
+  position: fixed;
+  top: calc(var(--frame-width) + 40px);
+  right: calc(var(--frame-width) + 60px);
+  display: flex;
+  gap: 35px;
+  align-items: center;
+  z-index: 2000;
 }
 
-.notes strong {
-  font-weight: normal;
-  font-family: 'Rubik', sans-serif;
+.nav-menu button {
+  background: none;
+  border: none;
+  font-family: inherit;
+  font-size: 1.1rem;
+  font-weight: 500;
+  cursor: pointer;
+  color: var(--text-color);
+  text-transform: lowercase;
+  transition: opacity 0.3s;
 }
 
-svg {
-  width: 100%;
-  height: 675px;
-}
+.nav-menu button:hover { opacity: 0.5; }
 
-@media (max-width: 900px) {
-  svg {
-    height: 500px;
-  }
-}
+.home-icon svg { width: 24px; height: 24px; stroke: currentColor; fill: none; stroke-width: 2; }
 
-footer {
-  max-width: 1000px;
-  margin: 54px auto 0;
-  padding: 36px 18px;
-  text-align: center;
-  position: relative;
-}
-
-footer::before {
-  content: "";
+/* Contenitore Sezioni con Transizione */
+.sections-container {
   position: absolute;
-  top: 0;
-  left: 18px;
-  right: 18px;
-  height: 6px;
-  background: #fff2a8;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: var(--bg-color);
+  z-index: 10;
+  transform: translateY(100%);
+  transition: transform 1s cubic-bezier(0.85, 0, 0.15, 1);
+  overflow: hidden;
 }
+
+.sections-container.active { transform: translateY(0); }
+
+.sections-container.switching {
+  transform: translateY(100%);
+  transition: none;
+}
+
+.sections-wrapper {
+  padding: 90px 10% 100px; /* Ridotto il padding top da 150px a 90px per alzare i titoli */
+  max-width: 1400px;
+  margin: 0 auto;
+  height: 100%;
+  overflow-y: auto;
+}
+
+.section { display: none; opacity: 0; transition: opacity 0.5s ease 0.3s; }
+.section.active { display: block; opacity: 1; }
+
+.section-title {
+  font-size: 3.5rem;
+  font-weight: 300;
+  margin-bottom: 20px; /* Ridotto il margine inferiore per alzare i grafici rispetto al titolo */
+  text-transform: lowercase;
+}
+
+/* Grafici */
+.chart-box { margin-bottom: 80px; }
+
+.chart-svg {
+  width: 100%;
+  height: 480px;
+  background: transparent;
+  overflow: visible;
+}
+
+.axis-label { font-size: 12px; fill: #888; font-weight: 400; }
+.grid-line { stroke: #e5e5e5; stroke-width: 1; }
+
+.chart-footer { margin-top: 40px; }
+
+.legend { display: flex; gap: 20px; flex-wrap: wrap; margin-bottom: 30px; }
+.legend-item { display: flex; align-items: center; gap: 8px; font-size: 0.8rem; color: #666; }
+.legend-dot { width: 10px; height: 10px; border-radius: 2px; }
+
+.notes-section {
+  margin-top: 50px;
+  padding-top: 20px;
+  border-top: 1px solid var(--line-color);
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+/* Timeline */
+.timeline-list {
+  display: flex;
+  flex-direction: column-reverse;
+  border-left: 1px solid var(--line-color);
+  padding-left: 30px;
+  margin-top: 40px; /* Aggiunto spazio sopra la timeline */
+}
+.timeline-item { position: relative; margin-bottom: 50px; }
+.timeline-item::before {
+  content: ''; position: absolute; left: -36px; top: 8px;
+  width: 10px; height: 10px; background: var(--bg-color);
+  border: 1px solid var(--text-color); border-radius: 50%;
+}
+.timeline-date { font-size: 0.75rem; color: #888; text-transform: uppercase; margin-bottom: 5px; }
+
+/* Resources */
+.resources-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; margin-top: 40px; }
+.res-card {
+  padding: 30px; border: 1px solid var(--line-color);
+  text-decoration: none; color: inherit; transition: background 0.3s;
+}
+.res-card:hover { background: #fff; }
+
 </style>
 </head>
-
 <body>
 
-<h1>SG</h1>
+<div class="frame frame-top"></div>
+<div class="frame frame-bottom"></div>
+<div class="frame frame-left"></div>
+<div class="frame frame-right"></div>
 
-<section id="info">
-  <p>
-   I'm Giovanni, and I love bees. When I'm not tending to them, I share my home with Giada and a feline named Daijin. To be honest, Giada and I just live there—Daijin is the undisputed ruler of the house. I use the section below as a personal monthly log to monitor my progress and reflect on how my path changes over time.
-  </p>
-</section>
+<div class="main-container">
+  <div class="gradient-bg" id="bgLayer"></div>
 
-<section id="timeline">
-  <h2>Timeline</h2>
-  <div class="timeline-wrapper">
-    <div class="timeline">
-      <div class="timeline-line"></div>
+  <nav class="nav-menu">
+    <button data-target="home" class="home-icon">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+    </button>
+    <button data-target="timeline">timeline</button>
+    <button data-target="behavioral">behavioral</button>
+    <button data-target="metrics">metrics</button>
+    <button data-target="resources">resources</button>
+  </nav>
 
-      <div class="event" style="left: 0px">
-        <div class="date">1997</div>
-        <div class="dot"></div>
-        <div class="text">Start</div>
+  <!-- Homepage -->
+  <section class="homepage" id="homeSection">
+    <p class="homepage-description">Sistema di Supporto Vitale Digitale</p>
+    <h1 class="homepage-title">LIFE SUPPORT<br>SYSTEM</h1>
+  </section>
+
+  <!-- Contenitore delle sezioni -->
+  <div class="sections-container" id="contentLayer">
+    <div class="sections-wrapper">
+      
+      <!-- Timeline -->
+      <div class="section" id="timeline">
+        <h2 class="section-title">timeline</h2>
+        <div class="timeline-list">
+          <div class="timeline-item">
+            <div class="timeline-date">Gennaio 2024</div>
+            <h3>Inizio Protocollo</h3>
+            <p>Fase Alpha del sistema di tracciamento asset.</p>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-date">Marzo 2024</div>
+            <h3>Espansione Behavioral</h3>
+            <p>Integrazione metriche benessere e focus.</p>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-date">Oggi</div>
+            <h3>Update Star Trak</h3>
+            <p>Nuova interfaccia architettonica v2.5.</p>
+          </div>
+        </div>
       </div>
 
-      <div class="event" style="left: 500px">
-        <div class="date">2016</div>
-        <div class="dot"></div>
-        <div class="text">Degree</div>
+      <!-- Behavioral -->
+      <div class="section" id="behavioral">
+        <h2 class="section-title">behavioral</h2>
+        <div class="chart-box">
+          <svg class="chart-svg" viewBox="0 0 1000 480">
+            <g class="grid-y">
+              <text x="35" y="385" class="axis-label" text-anchor="end">0</text>
+              <line x1="50" y1="380" x2="950" y2="380" class="grid-line" />
+              <text x="35" y="352" class="axis-label" text-anchor="end">10</text>
+              <line x1="50" y1="347" x2="950" y2="347" class="grid-line" />
+              <text x="35" y="319" class="axis-label" text-anchor="end">20</text>
+              <line x1="50" y1="314" x2="950" y2="314" class="grid-line" />
+              <text x="35" y="286" class="axis-label" text-anchor="end">30</text>
+              <line x1="50" y1="281" x2="950" y2="281" class="grid-line" />
+              <text x="35" y="253" class="axis-label" text-anchor="end">40</text>
+              <line x1="50" y1="248" x2="950" y2="248" class="grid-line" />
+              <text x="35" y="220" class="axis-label" text-anchor="end">50</text>
+              <line x1="50" y1="215" x2="950" y2="215" class="grid-line" />
+              <text x="35" y="187" class="axis-label" text-anchor="end">60</text>
+              <line x1="50" y1="182" x2="950" y2="182" class="grid-line" />
+              <text x="35" y="154" class="axis-label" text-anchor="end">70</text>
+              <line x1="50" y1="149" x2="950" y2="149" class="grid-line" />
+              <text x="35" y="121" class="axis-label" text-anchor="end">80</text>
+              <line x1="50" y1="116" x2="950" y2="116" class="grid-line" />
+              <text x="35" y="88" class="axis-label" text-anchor="end">90</text>
+              <line x1="50" y1="83" x2="950" y2="83" class="grid-line" />
+              <text x="35" y="55" class="axis-label" text-anchor="end">100</text>
+              <line x1="50" y1="50" x2="950" y2="50" class="grid-line" />
+            </g>
+            <g class="grid-x">
+              <text x="90" y="410" class="axis-label" text-anchor="middle">GEN</text>
+              <text x="165" y="410" class="axis-label" text-anchor="middle">FEB</text>
+              <text x="240" y="410" class="axis-label" text-anchor="middle">MAR</text>
+              <text x="315" y="410" class="axis-label" text-anchor="middle">APR</text>
+              <text x="390" y="410" class="axis-label" text-anchor="middle">MAG</text>
+              <text x="465" y="410" class="axis-label" text-anchor="middle">GIU</text>
+              <text x="540" y="410" class="axis-label" text-anchor="middle">LUG</text>
+              <text x="615" y="410" class="axis-label" text-anchor="middle">AGO</text>
+              <text x="690" y="410" class="axis-label" text-anchor="middle">SET</text>
+              <text x="765" y="410" class="axis-label" text-anchor="middle">OTT</text>
+              <text x="840" y="410" class="axis-label" text-anchor="middle">NOV</text>
+              <text x="915" y="410" class="axis-label" text-anchor="middle">DIC</text>
+            </g>
+          </svg>
+          <div class="chart-footer">
+            <div class="legend">
+              <div class="legend-item"><div class="legend-dot" style="background:#1a1a1a"></div> Wellness Index</div>
+            </div>
+            <div class="notes-section">Annotazioni: Monitoraggio indice di benessere soggettivo.</div>
+          </div>
+        </div>
       </div>
 
-      <div class="event" style="left: 800px">
-        <div class="date">2022</div>
-        <div class="dot"></div>
-        <div class="text">Lab Analyst</div>
+      <!-- Metrics -->
+      <div class="section" id="metrics">
+        <h2 class="section-title">metrics</h2>
+        <div class="chart-box">
+          <svg class="chart-svg" viewBox="0 0 1000 480">
+            <g class="grid-y">
+              <text x="35" y="385" class="axis-label" text-anchor="end">0</text>
+              <line x1="50" y1="380" x2="950" y2="380" class="grid-line" />
+              <text x="35" y="352" class="axis-label" text-anchor="end">10</text>
+              <line x1="50" y1="347" x2="950" y2="347" class="grid-line" />
+              <text x="35" y="319" class="axis-label" text-anchor="end">20</text>
+              <line x1="50" y1="314" x2="950" y2="314" class="grid-line" />
+              <text x="35" y="286" class="axis-label" text-anchor="end">30</text>
+              <line x1="50" y1="281" x2="950" y2="281" class="grid-line" />
+              <text x="35" y="253" class="axis-label" text-anchor="end">40</text>
+              <line x1="50" y1="248" x2="950" y2="248" class="grid-line" />
+              <text x="35" y="220" class="axis-label" text-anchor="end">50</text>
+              <line x1="50" y1="215" x2="950" y2="215" class="grid-line" />
+              <text x="35" y="187" class="axis-label" text-anchor="end">60</text>
+              <line x1="50" y1="182" x2="950" y2="182" class="grid-line" />
+              <text x="35" y="154" class="axis-label" text-anchor="end">70</text>
+              <line x1="50" y1="149" x2="950" y2="149" class="grid-line" />
+              <text x="35" y="121" class="axis-label" text-anchor="end">80</text>
+              <line x1="50" y1="116" x2="950" y2="116" class="grid-line" />
+              <text x="35" y="88" class="axis-label" text-anchor="end">90</text>
+              <line x1="50" y1="83" x2="950" y2="83" class="grid-line" />
+              <text x="35" y="55" class="axis-label" text-anchor="end">100</text>
+              <line x1="50" y1="50" x2="950" y2="50" class="grid-line" />
+            </g>
+            <g class="grid-x">
+              <text x="90" y="410" class="axis-label" text-anchor="middle">GEN</text>
+              <text x="165" y="410" class="axis-label" text-anchor="middle">FEB</text>
+              <text x="240" y="410" class="axis-label" text-anchor="middle">MAR</text>
+              <text x="315" y="410" class="axis-label" text-anchor="middle">APR</text>
+              <text x="390" y="410" class="axis-label" text-anchor="middle">MAG</text>
+              <text x="465" y="410" class="axis-label" text-anchor="middle">GIU</text>
+              <text x="540" y="410" class="axis-label" text-anchor="middle">LUG</text>
+              <text x="615" y="410" class="axis-label" text-anchor="middle">AGO</text>
+              <text x="690" y="410" class="axis-label" text-anchor="middle">SET</text>
+              <text x="765" y="410" class="axis-label" text-anchor="middle">OTT</text>
+              <text x="840" y="410" class="axis-label" text-anchor="middle">NOV</text>
+              <text x="915" y="410" class="axis-label" text-anchor="middle">DIC</text>
+            </g>
+            <!-- Linee dati vuote -->
+            <polyline points="" fill="none" stroke="#1a1a1a" stroke-width="2" />
+            <polyline points="" fill="none" stroke="#888" stroke-width="2" stroke-dasharray="4" />
+            <polyline points="" fill="none" stroke="#d4af37" stroke-width="2" />
+            <polyline points="" fill="none" stroke="#000" stroke-width="3" />
+          </svg>
+          <div class="chart-footer">
+            <div class="legend">
+              <div class="legend-item"><div class="legend-dot" style="background:#1a1a1a"></div> 1° Pilastro</div>
+              <div class="legend-item"><div class="legend-dot" style="background:#888; border: 1px dashed #000"></div> 2° Pilastro</div>
+              <div class="legend-item"><div class="legend-dot" style="background:#d4af37"></div> 3° Pilastro</div>
+              <div class="legend-item"><div class="legend-dot" style="background:#000"></div> 4° Pilastro</div>
+            </div>
+            <div class="notes-section">Note: Analisi dei quattro pilastri finanziari.</div>
+          </div>
+        </div>
       </div>
 
-      <div class="event" style="left: 1000px">
-        <div class="date">2023</div>
-        <div class="dot"></div>
-        <div class="text">Application specialist</div>
+      <!-- Resources -->
+      <div class="section" id="resources">
+        <h2 class="section-title">resources</h2>
+        <div class="resources-grid">
+          <a href="#" class="res-card">
+            <h3>Google Sheets</h3>
+            <p>Database principale per il calcolo dei pilastri.</p>
+          </a>
+          <a href="#" class="res-card">
+            <h3>Focus Log</h3>
+            <p>Archivio storico dei log comportamentali.</p>
+          </a>
+        </div>
       </div>
 
-      <div class="event" style="left: 1400px">
-        <div class="date">2025</div>
-        <div class="dot"></div>
-        <div class="text">Bachelor's degree</div>
-      </div>
     </div>
   </div>
-</section>
-
-<!-- HABITS -->
-<section id="habits">
-  <h2>Habits</h2>
-
-  <div class="chart-container">
-    <div class="chart-area">
-      <svg id="habitsChart" viewBox="0 0 1080 1050">
-        <line x1="54" y1="18" x2="54" y2="990" stroke="#111"/>
-        <line x1="54" y1="990" x2="1044" y2="990" stroke="#111"/>
-      </svg>
-      <div class="legend">
-        <span>Monthly score (0–100).
- <span>0-39= Overloaded
- <span>40-59= Sub-optimal condition 
- <span>60-74= Good balance
- <span>75-89= Optimal condition
- <span>90-100= Excellent condition and well recovered</span>
-      </div>
-    </div>
-
-    <div class="notes">
-      <h3>Note</h3>
-      <p><span>2026-01</span> – Avvio tracciamento abitudini.</p>
-	<p><span>2026-01</span> – I dati su cui si basa sono: ore di sonno totali, ore di sonno REM, ore di sonno profondo, frequenza cardiaca a riposo, frequenza cardiaca in allenamento, numero di allenamenti, minuti di attività, passi giornalieri, ore di lavoro, giorni senza allenamento. Con questi dati posso calcolare: recupero (R), stato cardiovascolare (C), attività fisica (A), stress e carico di lavoro (L) ed infine il Wellness Index (WI)
-Calcolo: WI=100⋅(0.35R+0.25C+0.25A+0.15L). </p>
-    </div>
-  </div>
-</section>
-
-<!-- NET WORTH -->
-<section id="networth">
-  <h2>Net Worth</h2>
-
-  <div class="chart-container">
-    <div class="chart-area">
-      <svg id="networthChart" viewBox="0 0 1080 1050">
-        <line x1="54" y1="18" x2="54" y2="990" stroke="#111"/>
-        <line x1="54" y1="990" x2="1044" y2="990" stroke="#111"/>
-
-        <polyline id="line-primo" fill="none" stroke="red" stroke-width="2"/>
-        <polyline id="line-secondo" fill="none" stroke="blue" stroke-width="2"/>
-        <polyline id="line-terzo" fill="none" stroke="green" stroke-width="2"/>
-        <polyline id="line-quarto" fill="none" stroke="orange" stroke-width="2"/>
-      </svg>
-
-      <div class="legend">
-        <span><span class="box" style="background:red"></span>Primo Pilastro</span>
-        <span><span class="box" style="background:blue"></span>Secondo Pilastro</span>
-        <span><span class="box" style="background:green"></span>Terzo Pilastro</span>
-        <span><span class="box" style="background:orange"></span>Quarto Pilastro</span>
-      </div>
-    </div>
-
-    <div class="notes">
-      <h3>Note</h3>
-      <p><span>2024-01</span> – Nessun movimento rilevante.</p>
-      <p><span>2024-06</span> – Inizio accantonamento fondo pensione.</p>
-    </div>
-  </div>
-</section>
-
-<footer>
-</footer>
+</div>
 
 <script>
-// =============================
-// TIMELINE AUTO-SCROLL
-// =============================
-window.addEventListener('load', () => {
-  const timelineWrapper = document.querySelector('.timeline-wrapper');
-  const lastEventPosition = 800; // Posizione dell'ultimo evento (Bachelor's degree)
-  const viewportWidth = timelineWrapper.clientWidth;
-  // Centra l'ultimo evento
-  timelineWrapper.scrollLeft = lastEventPosition - (viewportWidth / 2);
-});
+const buttons = document.querySelectorAll('.nav-menu button');
+const sections = document.querySelectorAll('.section');
+const homeSection = document.getElementById('homeSection');
+const contentLayer = document.getElementById('contentLayer');
+const bgLayer = document.getElementById('bgLayer');
 
-// =============================
-// NET WORTH (SVG)
-// =============================
-// Valori in migliaia di euro (modifica questi valori con i tuoi dati reali)
-const patrimonio = {
-  primoPilastro: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-  secondoPilastro: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-  terzoPilastro: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-  quartoPilastro: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-};
+buttons.forEach(btn => {
+  btn.addEventListener('click', () => {
+    const target = btn.getAttribute('data-target');
 
-const mesi = ['Gen', 'Feb', 'Mar', 'Apr', 'Mag', 'Giu', 'Lug', 'Ago', 'Set', 'Ott', 'Nov', 'Dic'];
-
-// Calcola il valore massimo per lo zoom automatico
-const allValues = [
-  ...patrimonio.primoPilastro,
-  ...patrimonio.secondoPilastro,
-  ...patrimonio.terzoPilastro,
-  ...patrimonio.quartoPilastro
-];
-const maxValue = Math.max(...allValues) || 100; // Default 100 se tutti i valori sono 0
-const chartHeight = 972; // Altezza disponibile per il grafico (990 - 18 allineato)
-const scale = chartHeight / maxValue; // Scala automatica
-
-function toPoints(data) {
-  return data.map((v, i) => {
-    const x = 90 + (i * 81); // Spaziatura per 12 mesi (990/12 ≈ 81px per mese)
-    const y = 990 - (v * scale);
-    return `${x},${y}`;
-  }).join(" ");
-}
-
-// Disegna le linee del portfolio
-document.getElementById("line-primo").setAttribute("points", toPoints(patrimonio.primoPilastro));
-document.getElementById("line-secondo").setAttribute("points", toPoints(patrimonio.secondoPilastro));
-document.getElementById("line-terzo").setAttribute("points", toPoints(patrimonio.terzoPilastro));
-document.getElementById("line-quarto").setAttribute("points", toPoints(patrimonio.quartoPilastro));
-
-const nwsvg = document.getElementById("networthChart");
-
-// Aggiungi etichette mesi sull'asse X (tutti i 12 mesi)
-patrimonio.primoPilastro.forEach((_, i) => {
-  const label = document.createElementNS("http://www.w3.org/2000/svg", "text");
-  label.setAttribute("x", 90 + (i * 81));
-  label.setAttribute("y", 1018);
-  label.setAttribute("font-size", "16");
-  label.setAttribute("text-anchor", "middle");
-  label.setAttribute("fill", "#111");
-  label.textContent = mesi[i];
-  nwsvg.appendChild(label);
-});
-
-// Aggiungi etichette valori sull'asse Y (in migliaia di euro)
-const numYLabels = 5;
-const yStep = maxValue / numYLabels;
-
-for (let i = 0; i <= numYLabels; i++) {
-  const value = Math.round(yStep * i);
-  const y = 990 - (value * scale);
-  
-  // Linea griglia orizzontale
-  const gridLine = document.createElementNS("http://www.w3.org/2000/svg", "line");
-  gridLine.setAttribute("x1", "54");
-  gridLine.setAttribute("y1", y);
-  gridLine.setAttribute("x2", "1044");
-  gridLine.setAttribute("y2", y);
-  gridLine.setAttribute("stroke", "#e0e0e0");
-  gridLine.setAttribute("stroke-width", "1");
-  nwsvg.appendChild(gridLine);
-  
-  // Etichetta valore
-  const label = document.createElementNS("http://www.w3.org/2000/svg", "text");
-  label.setAttribute("x", "45");
-  label.setAttribute("y", y + 5);
-  label.setAttribute("font-size", "15");
-  label.setAttribute("text-anchor", "end");
-  label.setAttribute("fill", "#666");
-  label.textContent = value + "k€";
-  nwsvg.appendChild(label);
-}
-
-// =============================
-// HABITS (SVG)
-// =============================
-const habits = [
-  { month: 'Gen', score: 0 },
-  { month: 'Feb', score: 0 },
-  { month: 'Mar', score: 0 },
-  { month: 'Apr', score: 0 },
-  { month: 'Mag', score: 0 },
-  { month: 'Giu', score: 0 },
-  { month: 'Lug', score: 0 },
-  { month: 'Ago', score: 0 },
-  { month: 'Set', score: 0 },
-  { month: 'Ott', score: 0 },
-  { month: 'Nov', score: 0 },
-  { month: 'Dic', score: 0 }
-];
-
-const hsvg = document.getElementById("habitsChart");
-
-// Aggiungi etichette valori sull'asse Y (0-100 con step di 10)
-for (let i = 0; i <= 10; i++) {
-  const value = i * 10;
-  const y = 990 - (value * 9.72); // 9.72 è il fattore di scala per 100 max (972/100)
-  
-  // Linea griglia orizzontale
-  const gridLine = document.createElementNS("http://www.w3.org/2000/svg", "line");
-  gridLine.setAttribute("x1", "54");
-  gridLine.setAttribute("y1", y);
-  gridLine.setAttribute("x2", "1044");
-  gridLine.setAttribute("y2", y);
-  gridLine.setAttribute("stroke", "#e0e0e0");
-  gridLine.setAttribute("stroke-width", "1");
-  hsvg.appendChild(gridLine);
-  
-  // Etichetta valore
-  const label = document.createElementNS("http://www.w3.org/2000/svg", "text");
-  label.setAttribute("x", "45");
-  label.setAttribute("y", y + 5);
-  label.setAttribute("font-size", "15");
-  label.setAttribute("text-anchor", "end");
-  label.setAttribute("fill", "#666");
-  label.textContent = value;
-  hsvg.appendChild(label);
-}
-
-// Disegna le barre (tutti i 12 mesi)
-habits.forEach((h, i) => {
-  const barWidth = 54; // Larghezza multiplo di 18
-  const x = 63 + (i * 81); // Posizione barre
-  const height = h.score * 9.72; // Scala per max 100
-  const y = 990 - height;
-
-  const rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
-  rect.setAttribute("x", x);
-  rect.setAttribute("y", y);
-  rect.setAttribute("width", barWidth);
-  rect.setAttribute("height", height);
-  rect.setAttribute("fill", "#111");
-  hsvg.appendChild(rect);
-
-  const label = document.createElementNS("http://www.w3.org/2000/svg", "text");
-  label.setAttribute("x", x + 27);
-  label.setAttribute("y", 1018);
-  label.setAttribute("font-size", "16");
-  label.setAttribute("text-anchor", "middle");
-  label.setAttribute("fill", "#111");
-  label.textContent = h.month;
-  hsvg.appendChild(label);
+    if (target === 'home') {
+      contentLayer.classList.remove('active');
+      setTimeout(() => {
+        homeSection.classList.remove('hidden');
+        bgLayer.style.opacity = "1";
+      }, 500);
+    } else {
+      if (contentLayer.classList.contains('active')) {
+        contentLayer.classList.add('switching');
+        
+        setTimeout(() => {
+          sections.forEach(s => s.classList.remove('active'));
+          document.getElementById(target).classList.add('active');
+          contentLayer.classList.remove('switching');
+        }, 300);
+      } else {
+        homeSection.classList.add('hidden');
+        bgLayer.style.opacity = "0";
+        setTimeout(() => {
+          sections.forEach(s => s.classList.remove('active'));
+          document.getElementById(target).classList.add('active');
+          contentLayer.classList.add('active');
+        }, 500);
+      }
+    }
+  });
 });
 </script>
 
 </body>
-
 </html>
-
-
-
-
-
